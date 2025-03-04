@@ -33,43 +33,45 @@ const CsoInfoModal = (props) => {
       <div className="modal-xl">
         <ModalHeader toggle={toggle}>{t("View Details")}</ModalHeader>
         <ModalBody>
-        <tr>
-                    <p className="mb-2">
-            {t('cso_name')}: <span className="text-primary">{transaction.cso_name}</span>
-          </p>
-          </tr><tr>
-                    <p className="mb-2">
-            {t('cso_code')}: <span className="text-primary">{transaction.cso_code}</span>
-          </p>
-          </tr><tr>
-                    <p className="mb-2">
-            {t('cso_address')}: <span className="text-primary">{transaction.cso_address}</span>
-          </p>
-          </tr><tr>
-                    <p className="mb-2">
-            {t('cso_phone')}: <span className="text-primary">{transaction.cso_phone}</span>
-          </p>
-          </tr><tr>
-                    <p className="mb-2">
-            {t('cso_email')}: <span className="text-primary">{transaction.cso_email}</span>
-          </p>
-          </tr><tr>
-                    <p className="mb-2">
-            {t('cso_website')}: <span className="text-primary">{transaction.cso_website}</span>
-          </p>
-          </tr><tr>
-                    <p className="mb-2">
-            {t('cso_description')}: <span className="text-primary">{transaction.cso_description}</span>
-          </p>
-          </tr><tr>
-                    <td>@lang("form_lang.cso_status"):</td>
-                    <td>@if ($pms_cso_info_data->cso_status==1) @lang("form_lang.yes") @else @lang("form_lang.no") @endif</td>
-                    </tr>
-
+          <tr>
+            <p className="mb-2">
+              {t('cso_name')}: <span className="text-primary">{transaction.cso_name}</span>
+            </p>
+          </tr>
+          <tr>
+            <p className="mb-2">
+              {t('cso_code')}: <span className="text-primary">{transaction.cso_code}</span>
+            </p>
+          </tr>
+          <tr>
+            <p className="mb-2">
+              {t('cso_address')}: <span className="text-primary">{transaction.cso_address}</span>
+            </p>
+          </tr>
+          <tr>
+            <p className="mb-2">
+              {t('cso_phone')}: <span className="text-primary">{transaction.cso_phone}</span>
+            </p>
+          </tr>
+          <tr>
+            <p className="mb-2">
+              {t('cso_email')}: <span className="text-primary">{transaction.cso_email}</span>
+            </p>
+          </tr>
+          <tr>
+            <p className="mb-2">
+              {t('cso_website')}: <span className="text-primary">{transaction.cso_website}</span>
+            </p>
+          </tr>
+          <tr>
+            <p className="mb-2">
+              {t('cso_description')}: <span className="text-primary">{transaction.cso_description}</span>
+            </p>
+          </tr>
           {transaction.is_deletable === 1 && (
             <p className="text-danger">data is deletable</p>
           )}
-          
+
           {transaction.is_editable === 1 && (
             <p className="text-success">Editable</p>
           )}

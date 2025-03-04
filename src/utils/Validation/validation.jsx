@@ -124,6 +124,19 @@ export const dropdownValidation = (minLength, maxLength, isRequired = true) => {
   return schema;
 };
 
+export const websiteUrlValidation = (required = false) => {
+  let schema = Yup.string().matches(
+    /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w .-]*)*\/?$/,
+    "Invalid website URL"
+  );
+
+  if (required) {
+    schema = schema.required("Website URL is required");
+  }
+
+  return schema;
+};
+
 
 // These statuses are received from the backend. verify with the backend before making any modifications.
 // const statuses = {

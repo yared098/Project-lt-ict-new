@@ -9,15 +9,12 @@ import Spinners from "../../components/Common/Spinner";
 import CascadingDropdowns from "../../components/Common/CascadingDropdowns1";
 import CascadingDropdownsearch from "../../components/Common/CascadingDropdowns2";
 import CascadingDepartmentDropdowns from "./CascadingDepartmentDropdowns";
-//import components
 import Breadcrumbs from "../../components/Common/Breadcrumb";
-// pages
 import UserRoles from "../../pages/Userrole/index";
 import UserSectorModel from "../Usersector";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-alpine.css";
-import "bootstrap/dist/css/bootstrap.min.css";
 import AdvancedSearch from "../../components/Common/AdvancedSearch";
 import FetchErrorHandler from "../../components/Common/FetchErrorHandler";
 import {
@@ -54,11 +51,14 @@ import {
   Badge,
   InputGroup,
   InputGroupText,
+  FormGroup
 } from "reactstrap";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
+import Select from "react-select"
 import RightOffCanvas from "../../components/Common/RightOffCanvas";
 import { createSelectOptions } from "../../utils/commonMethods";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { useFetchCsoInfos } from "../../queries/csoinfo_query";
 
 //import ImageUploader from "../../components/Common/ImageUploader";
 const truncateText = (text, maxLength) => {
@@ -76,8 +76,8 @@ const statusText = {
   0: "Inactive", // Yellow for started
 };
 const UsersModel = () => {
-  //meta title
-  document.title = " Users";
+  document.title = "Users | PMS";
+
   const { t } = useTranslation();
   const [modal, setModal] = useState(false);
   const [modal1, setModal1] = useState(false);
@@ -86,6 +86,7 @@ const UsersModel = () => {
   const [isSearchLoading, setIsSearchLoading] = useState(false);
   const [searcherror, setSearchError] = useState(null);
   const [showSearchResult, setShowSearchResult] = useState(false);
+
   const { data, isLoading, error, isError, refetch } = useFetchUserss(null);
   const { data: sectorInformationData } = useFetchSectorInformations();
   const sectorInformationOptions = createSelectOptions(
@@ -107,6 +108,9 @@ const UsersModel = () => {
     "dep_id",
     "dep_name_en"
   );
+  const { data: csoData } = useFetchCsoInfos()
+  const csoOptions = createSelectOptions(csoData?.data || [], "cso_id", "cso_name")
+
   const addUsers = useAddUsers();
   const updateUsers = useUpdateUsers();
   const deleteUsers = useDeleteUsers();
@@ -196,10 +200,10 @@ const UsersModel = () => {
       usr_department_id: (users && users.usr_department_id) || "",
       is_deletable: (users && users.is_deletable) || 1,
       is_editable: (users && users.is_editable) || 1,
-
-usr_directorate_id: (users && users.usr_directorate_id) || "",
-usr_team_id: (users && users.usr_team_id) || "",
-usr_officer_id: (users && users.usr_officer_id) || ""
+      usr_directorate_id: (users && users.usr_directorate_id) || "",
+      usr_team_id: (users && users.usr_team_id) || "",
+      usr_officer_id: (users && users.usr_officer_id) || "",
+      usr_owner_id: (users && users.usr_owner_id) || "",
     },
     validationSchema: Yup.object({
       usr_email: Yup.string()
@@ -239,10 +243,8 @@ usr_officer_id: (users && users.usr_officer_id) || ""
     onSubmit: (values) => {
       if (isEdit) {
         const updateUsers = {
-          // usr_id: users ? users.usr_id : 0,
           usr_id: users?.usr_id,
           usr_email: values.usr_email,
-          // usr_password: values.usr_password,
           usr_full_name: values.usr_full_name,
           usr_phone_number: values.usr_phone_number,
           usr_role_id: values.usr_role_id,
@@ -261,9 +263,10 @@ usr_officer_id: (users && users.usr_officer_id) || ""
           usr_department_id: Number(values.usr_department_id),
           is_deletable: values.is_deletable,
           is_editable: values.is_editable,
-          usr_directorate_id : Number(values.usr_directorate_id),
-          usr_team_id : Number(values.usr_team_id),
-          usr_officer_id : Number(values.usr_officer_id),
+          usr_directorate_id: Number(values.usr_directorate_id),
+          usr_team_id: Number(values.usr_team_id),
+          usr_officer_id: Number(values.usr_officer_id),
+          usr_owner_id: Number(values.usr_owner_id),
         };
         // update Users
         handleUpdateUsers(updateUsers);
@@ -289,9 +292,10 @@ usr_officer_id: (users && users.usr_officer_id) || ""
           usr_department_id: Number(values.usr_department_id),
           is_deletable: values.is_deletable,
           is_editable: values.is_editable,
-          usr_directorate_id : Number(values.usr_directorate_id),
-          usr_team_id : Number(values.usr_team_id),
-          usr_officer_id : Number(values.usr_officer_id),
+          usr_directorate_id: Number(values.usr_directorate_id),
+          usr_team_id: Number(values.usr_team_id),
+          usr_officer_id: Number(values.usr_officer_id),
+          usr_owner_id: Number(values.usr_owner_id),
         };
         // setSelectedDepartment(values.usr_department_id);
         // update Users
@@ -319,9 +323,10 @@ usr_officer_id: (users && users.usr_officer_id) || ""
           usr_department_id: Number(values.usr_department_id),
           is_deletable: values.is_deletable,
           is_editable: values.is_editable,
-           usr_directorate_id : Number(values.usr_directorate_id),
-          usr_team_id : Number(values.usr_team_id),
-          usr_officer_id : Number(values.usr_officer_id),
+          usr_directorate_id: Number(values.usr_directorate_id),
+          usr_team_id: Number(values.usr_team_id),
+          usr_officer_id: Number(values.usr_officer_id),
+          usr_owner_id: Number(values.usr_owner_id),
         };
         handleAddUsers(newUsers);
       }
@@ -349,7 +354,6 @@ usr_officer_id: (users && users.usr_officer_id) || ""
   };
   const handleUsersClick = (arg) => {
     const user = arg;
-    console.log(user);
     setUsers({
       usr_id: user.usr_id,
       usr_email: user.usr_email,
@@ -372,9 +376,10 @@ usr_officer_id: (users && users.usr_officer_id) || ""
       usr_department_id: Number(user.usr_department_id),
       is_deletable: user.is_deletable,
       is_editable: user.is_editable,
-      usr_directorate_id : Number(user.usr_directorate_id),
-          usr_team_id : Number(user.usr_team_id),
-          usr_officer_id : Number(user.usr_officer_id),
+      usr_directorate_id: Number(user.usr_directorate_id),
+      usr_team_id: Number(user.usr_team_id),
+      usr_officer_id: Number(user.usr_officer_id),
+      usr_owner_id: Number(values.usr_owner_id),
     });
     setIsEdit(true);
     toggle();
@@ -422,6 +427,10 @@ usr_officer_id: (users && users.usr_officer_id) || ""
     setUsers("");
     toggle();
   };
+
+  const getStatusOption = (value) =>
+    csoOptions.find((option) => option.value === value) || null;
+
   const columnDefs = useMemo(() => {
     const baseColumns = [
       {
@@ -843,37 +852,30 @@ usr_officer_id: (users && users.usr_officer_id) || ""
                       </FormFeedback>
                     ) : null}
                   </Col>
-                  {/* <Col className="col-md-4 mb-3">
-                    <Label>{t("Cluster Name")} <span className="text-danger">*</span></Label>
-                    <Input
-                      name="usr_department_id"
-                      type="select"
-                      className="form-select"
-                      onChange={validation.handleChange}
-                      onBlur={validation.handleBlur}
-                      value={validation.values.usr_department_id || ""}
-                      invalid={
-                        validation.touched.usr_department_id &&
-                          validation.errors.usr_department_id
-                          ? true
-                          : false
-                      }
-                    >
-                      <option value="">{t("select_one")}</option>
-                      {departmentOptions.map((option) => (
-                        <option key={option.value} value={Number(option.value)}>
-                          {t(option.label)}
-                        </option>
-                      ))}
-                    </Input>
-                    {validation.touched.usr_department_id &&
-                      validation.errors.usr_department_id ? (
-                      <FormFeedback type="invalid">
-                        {validation.errors.usr_department_id}
-                      </FormFeedback>
-                    ) : null}
-                  </Col> */}
-
+                  <Col className="col-md-4 mb-3">
+                    <FormGroup>
+                      <Label>{t("usr_owner_id")}</Label>
+                      <Select
+                        name="usr_owner_id"
+                        options={csoOptions}
+                        value={getStatusOption(validation.values.usr_owner_id)}
+                        onChange={(selected) => validation.setFieldValue("usr_owner_id", selected.value)}
+                        className="select2-selection"
+                        invalid={
+                          validation.touched.usr_owner_id &&
+                            validation.errors.usr_owner_id
+                            ? true
+                            : false
+                        }
+                      />
+                      {validation.errors.usr_owner_id &&
+                        validation.touched.usr_owner_id && (
+                          <div className="text-danger">
+                            {validation.errors.usr_owner_id}
+                          </div>
+                        )}
+                    </FormGroup>
+                  </Col>
                   <Col className="col-md-6 mb-3">
                     <CascadingDropdowns
                       validation={validation}
