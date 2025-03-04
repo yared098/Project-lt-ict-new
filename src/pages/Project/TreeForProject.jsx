@@ -1,7 +1,6 @@
 import { useEffect, useState, memo, useCallback, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { useFetchAddressStructures } from "../../queries/address_structure_query";
-import { useFetchSectorCategorys } from "../../queries/sectorcategory_query";
 import { getUserSectorListTree } from "../../queries/usersector_query";
 import { useSearchProgramInfos, useFetchProgramInfos } from "../../queries/programinfo_query";
 import { Tree } from "react-arborist";
@@ -9,7 +8,7 @@ import { FaFolder, FaFile, FaChevronRight, FaChevronDown, FaChevronUp } from "re
 import { Card, CardBody, Input, Label, Col, Row, Button } from "reactstrap";
 
 const AddressTree = ({ onNodeSelect, setIsAddressLoading, setInclude }) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const treeRef = useRef()
   const storedUser = JSON.parse(localStorage.getItem("authUser"));
   const userId = storedUser?.user.usr_id;
@@ -194,6 +193,28 @@ const AddressTree = ({ onNodeSelect, setIsAddressLoading, setInclude }) => {
     setSearchTerm(e.target.value)
   }
 
+  const searchMatch = useCallback((node, term, lang) => {
+    if (!term) return true; 
+    const searchTerm = term.toLowerCase();
+    const getNodeName = (node) => {
+      if (!node?.data) return "";
+      if (lang === "en" && node.data.add_name_en) return node.data.add_name_en.toLowerCase();
+      if (lang === "am" && node.data.add_name_am) return node.data.add_name_am.toLowerCase();
+      return node.data.name?.toLowerCase() || "";
+    };
+    const nameExists = (currentNode) => {
+      if (getNodeName(currentNode).includes(searchTerm)) {
+        return true;
+      }
+      if (currentNode.parent) {
+        return nameExists(currentNode.parent);
+      }
+      return false;
+    };
+    return nameExists(node);
+  }, []);
+
+
   return (
     <Card className="border shadow-sm" style={{ minWidth: '400px' }}>
       <CardBody className="p-3">
@@ -222,6 +243,7 @@ const AddressTree = ({ onNodeSelect, setIsAddressLoading, setInclude }) => {
               initialData={treeData}
               openByDefault={false}
               searchTerm={searchTerm}
+              searchMatch={(node, term) => searchMatch(node, term, i18n.language)}
               ref={treeRef}
               width={500}
               height={800}

@@ -1,74 +1,3 @@
-// import { useEffect, useState, memo } from "react";
-// import { post } from "../../helpers/api_Lists";
-// import TreeNode from "../AddressTreeStructure/TreeNode";
-// import { useTranslation } from "react-i18next";
-// import { useFetchAddressStructures } from "../../queries/address_structure_query";
-// import { Col, Input, Label, Row } from "reactstrap";
-
-// const TreeForLists = ({
-//   onNodeSelect,
-//   setIsAddressLoading,
-//   setInclude,
-// }) => {
-//   const { t } = useTranslation();
-
-//   const storedUser = JSON.parse(localStorage.getItem("authUser"));
-//   const userId = storedUser?.user.usr_id;
-//   const { data, isLoading, isError, error, refetch } = useFetchAddressStructures(userId);
-//   const handleCheckboxChange = (e) => {
-//     if (setInclude) {
-//       setInclude(e.target.checked ? 1 : 0);
-//     }
-//   };
-//   useEffect(() => {
-//     setIsAddressLoading(isLoading);
-//   }, [isLoading, setIsAddressLoading]);
-//   if (isLoading) {
-//     return (
-//       <div
-//         style={{ minHeight: "450px" }}
-//         className="w-20 flex-shrink-0 p-3 bg-white border-end overflow-auto shadow-sm"
-//       >
-//         <h4 className="mb-2 text-secondary">{t("address_tree_Search")}</h4>
-//         <hr className="text-dark" />
-//         <p>Loading...</p>
-//       </div>
-//     );
-//   }
-//   if (isError) {
-//     return <div>Error fetching address structure</div>;
-//   }
-//   return (
-//     <div
-//       className="w-20 pe-2 flex-shrink-0 bg-white border-end overflow-auto shadow-sm col-sm-2"
-//       style={{ minHeight: "450px" }}
-//     >
-//       <h4 className="mb-2 text-secondary p-2">{t("address_tree_Search")}</h4>
-//       <hr className="text-dark" />
-//       <>
-//         <Col className="d-flex gap-2 ms-3">
-//           <Input
-//             id="include"
-//             name="include"
-//             type="checkbox"
-//             onChange={handleCheckboxChange}
-//           />
-//           <Label for="include">{t('include_sub_address')}</Label>
-//         </Col>
-//       </>
-//       {data.length > 0 ? (
-//         data.map((node) => (
-//           <TreeNode key={node.id} node={node} onNodeClick={onNodeSelect} />
-//         ))
-//       ) : (
-//         <div>No address structure data available.</div>
-//       )}
-//     </div>
-//   );
-// };
-// export default memo(TreeForLists);
-
-
 import { useEffect, useState, memo, useCallback, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { useFetchAddressStructures } from "../../queries/address_structure_query";
@@ -77,11 +6,11 @@ import { FaFolder, FaFile, FaChevronRight, FaChevronDown, FaChevronUp } from "re
 import { Card, CardBody, Input, Label, Col, Row, Button } from "reactstrap";
 
 const TreeForLists = ({ onNodeSelect, setIsAddressLoading, setInclude }) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const treeRef = useRef()
   const storedUser = JSON.parse(localStorage.getItem("authUser"));
   const userId = storedUser?.user.usr_id;
-  const { data, isLoading } = useFetchAddressStructures(userId);
+  const { data, isLoading, isError } = useFetchAddressStructures(userId);
   const [treeData, setTreeData] = useState([]);
   const [searchTerm, setSearchTerm] = useState(null)
 
@@ -123,6 +52,43 @@ const TreeForLists = ({ onNodeSelect, setIsAddressLoading, setInclude }) => {
     setSearchTerm(e.target.value)
   }
 
+  const searchMatch = useCallback((node, term, lang) => {
+    if (!term) return true;
+    const searchTerm = term.toLowerCase();
+    const getNodeName = (node) => {
+      if (!node?.data) return "";
+      if (lang === "en" && node.data.add_name_en) return node.data.add_name_en.toLowerCase();
+      if (lang === "am" && node.data.add_name_am) return node.data.add_name_am.toLowerCase();
+      return node.data.name?.toLowerCase() || "";
+    };
+    const nameExists = (currentNode) => {
+      if (getNodeName(currentNode).includes(searchTerm)) {
+        return true;
+      }
+      if (currentNode.parent) {
+        return nameExists(currentNode.parent);
+      }
+      return false;
+    };
+    return nameExists(node);
+  }, []);
+
+  if (isLoading) {
+    return (
+      <div
+        style={{ minHeight: "450px" }}
+        className="w-20 flex-shrink-0 p-3 bg-white border-end overflow-auto shadow-sm"
+      >
+        <h4 className="mb-2 text-secondary">{t("address_tree_Search")}</h4>
+        <hr className="text-dark" />
+        <p>Loading...</p>
+      </div>
+    );
+  }
+  if (isError) {
+    return <div>Error fetching address structure</div>;
+  }
+
   return (
     <Card className="border shadow-sm" style={{ minWidth: '400px' }}>
       <CardBody className="p-3">
@@ -151,6 +117,7 @@ const TreeForLists = ({ onNodeSelect, setIsAddressLoading, setInclude }) => {
               initialData={treeData}
               openByDefault={false}
               searchTerm={searchTerm}
+              searchMatch={(node, term) => searchMatch(node, term, i18n.language)}
               ref={treeRef}
               width={400}
               height={700}
