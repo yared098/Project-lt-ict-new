@@ -8,13 +8,13 @@ import {
   getSearchProject
 } from "../helpers/project_backend_helper";
 
-export const PROJECT_QUERY_KEY = ["project"];
+export const PROJECT_QUERY_KEY = ["project_cso"];
 
 // Fetch project
-export const useFetchProjects = (param = {}) => {
+export const useFetchProjects = (userId) => {
   return useQuery({
-    queryKey: [...PROJECT_QUERY_KEY, "fetch", param],
-    queryFn: () => getProject(param),
+    queryKey: [...PROJECT_QUERY_KEY, "fetch", userId],
+    queryFn: () => getProject(),
     staleTime: 1000 * 60 * 5,
     meta: { persist: true },
     refetchOnWindowFocus: false,

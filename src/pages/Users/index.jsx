@@ -379,7 +379,7 @@ const UsersModel = () => {
       usr_directorate_id: Number(user.usr_directorate_id),
       usr_team_id: Number(user.usr_team_id),
       usr_officer_id: Number(user.usr_officer_id),
-      usr_owner_id: Number(values.usr_owner_id),
+      usr_owner_id: Number(user.usr_owner_id),
     });
     setIsEdit(true);
     toggle();

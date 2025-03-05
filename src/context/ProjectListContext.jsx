@@ -1,5 +1,5 @@
 import React, { createContext, useState, useContext, useEffect } from "react";
-import { useSearchOnlyProjects } from "../queries/project_query";
+import { useSearchProjects } from "../queries/project_query";
 import FetchErrorHandler from "../components/Common/FetchErrorHandler";
 
 // Create the context
@@ -25,7 +25,7 @@ const ProjectListProvider = ({ children }) => {
     error: srError,
     isError: isSrError,
     refetch: search,
-  } = useSearchOnlyProjects(searchParams);
+  } = useSearchProjects(searchParams);
 
   useEffect(() => {
     const fetchData = async () => {

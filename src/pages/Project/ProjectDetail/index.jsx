@@ -30,7 +30,7 @@ const LazyComponents = {
 
 const ProjectsOverview = () => {
   document.title = "Overview | Project";
-  
+
   const location = useLocation()
   const projectId = Number(location.pathname.split("/")[2].split("#")[0]);
 
@@ -57,7 +57,7 @@ const ProjectsOverview = () => {
     58: { label: t("proposal_request"), component: LazyComponents.ProposalRequestModel, path: "proposal-request" },
     57: { label: t("conversation_information"), component: LazyComponents.Conversation, path: "conversations" },
     59: { label: t("request_information"), component: LazyComponents.RequestInformationModel, path: "requests" },
-    34: { label: t("budget_request"), component: LazyComponents.BudgetRequestModel, path: "budget_request" },
+    34: { label: t("proposal_request"), component: LazyComponents.BudgetRequestModel, path: "budget_request" },
     61: { label: t("project_plan"), component: LazyComponents.ProjectPlanModel, path: "project_plan" },
     39: { label: t("request_information"), component: LazyComponents.RequestInformationModel, path: "information" },
   }), [t]);

@@ -80,7 +80,6 @@ const CascadingDepartmentDropdowns = ({
           value={validation.values[dropdown1name]}
           onChange={handleDepartmentChange}
           onBlur={validation.handleBlur}
-          invalid={!!validation.errors[dropdown1name]}
         >
           <option value="">{t("select_department")}</option>
           {loadingDepartments ? <option disabled>{t("Loading...")}</option> :

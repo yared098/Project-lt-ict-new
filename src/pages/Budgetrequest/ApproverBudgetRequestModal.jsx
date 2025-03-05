@@ -40,6 +40,7 @@ import { useFetchBudgetRequestTasks } from "../../queries/budgetrequesttask_quer
 import { useFetchBudgetExSources } from "../../queries/budgetexsource_query";
 import DatePicker from "../../components/Common/DatePicker";
 import RequestFollowupModel from "../Requestfollowup";
+import AssignCsoRequests from "./AssignCsoRequests";
 
 const modalStyle = {
   width: "100%",
@@ -270,6 +271,11 @@ const ApproverBudgetRequestListModal = (props) => {
       id: "request_followup",
       label: `${t("request_follow_up")}`,
       content: <RequestFollowupModel request={transaction} />
+    },
+    {
+      id: "Assign",
+      label: "Assign",
+      content: <AssignCsoRequests request={transaction} isActive={isOpen} budgetYearMap={budgetYearMap} />
     }
   ];
 

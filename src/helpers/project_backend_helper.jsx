@@ -1,10 +1,10 @@
 import { post, get } from "./api_Lists";
 
 const apiUrl = import.meta.env.VITE_BASE_API_URL;
-const GET_PROJECT = "project/listgrid";
-const ADD_PROJECT = "project/insertgrid";
-const UPDATE_PROJECT = "project/updategrid";
-const DELETE_PROJECT = "project/deletegrid";
+const GET_PROJECT = "project_cso/listgrid";
+const ADD_PROJECT = "project_cso/insertgrid";
+const UPDATE_PROJECT = "project_cso/updategrid";
+const DELETE_PROJECT = "project_cso/deletegrid";
 
 const GET_SEARCH_PROJECT = "project/listgridsearch";
 // get project
