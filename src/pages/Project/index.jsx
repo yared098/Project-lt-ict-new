@@ -27,7 +27,6 @@ import {
 } from "../../queries/project_query";
 import { useFetchProjectCategorys } from "../../queries/projectcategory_query";
 import { useFetchSectorInformations } from "../../queries/sectorinformation_query";
-import { useFetchDepartments } from "../../queries/department_query";
 import { useTranslation } from "react-i18next";
 import ProgramInfoModel from "../Programinfo";
 //import BudgetRequestModel from "../../pages/BudgetRequest";
@@ -120,16 +119,6 @@ const ProjectModel = () => {
     "sci_name_en"
   );
 
-  const { data: departmentData } = useFetchDepartments();
-  const {
-    dep_name_en: departmentOptionsEn,
-    dep_name_or: departmentOptionsOr,
-    dep_name_am: departmentOptionsAm,
-  } = createMultiSelectOptions(
-    (departmentData?.data || []).slice(1), // Remove the item at index 0
-    "dep_id",
-    ["dep_name_en", "dep_name_or", "dep_name_am"]
-  );
   const addProject = useAddProject();
   const updateProject = useUpdateProject();
   const deleteProject = useDeleteProject();
@@ -235,7 +224,7 @@ const ProjectModel = () => {
       prj_owner_id: (project && project.prj_owner_id) || "",
       prj_urban_ben_number: (project && project.prj_urban_ben_number) || "",
       prj_rural_ben_number: (project && project.prj_rural_ben_number) || "",
-      prj_department_id: (project && project.prj_department_id) || "",
+     // prj_department_id: (project && project.prj_department_id) || "",
       is_deletable: (project && project.is_deletable) || 1,
       is_editable: (project && project.is_editable) || 1,
     },
@@ -314,7 +303,7 @@ const ProjectModel = () => {
           prj_total_estimate_budget: values.prj_total_estimate_budget,
           prj_total_actual_budget: values.prj_total_actual_budget,
           prj_geo_location: values.prj_geo_location,
-          prj_sector_id: values.prj_sector_id,
+          prj_sector_id: Number(selectedPage.data.pri_sector_id),
           prj_location_region_id: Number(values.prj_location_region_id),
           prj_location_zone_id: Number(values.prj_location_zone_id),
           prj_location_woreda_id: Number(values.prj_location_woreda_id),
@@ -340,7 +329,7 @@ const ProjectModel = () => {
           prj_owner_id: values.prj_owner_id,
           prj_urban_ben_number: values.prj_urban_ben_number,
           prj_rural_ben_number: values.prj_rural_ben_number,
-          prj_department_id: Number(values.prj_department_id),
+          //prj_department_id: Number(values.prj_department_id),
           prj_program_id: Number(selectedPage.data.pri_id),
           is_deletable: values.is_deletable,
           is_editable: values.is_editable,
@@ -359,7 +348,7 @@ const ProjectModel = () => {
           prj_total_estimate_budget: values.prj_total_estimate_budget,
           prj_total_actual_budget: values.prj_total_actual_budget,
           prj_geo_location: values.prj_geo_location,
-          prj_sector_id: values.prj_sector_id,
+          prj_sector_id: Number(selectedPage.data.pri_sector_id),
           prj_location_region_id: Number(values.prj_location_region_id),
           prj_location_zone_id: Number(values.prj_location_zone_id),
           prj_location_woreda_id: Number(values.prj_location_woreda_id),
@@ -385,7 +374,7 @@ const ProjectModel = () => {
           prj_owner_id: values.prj_owner_id,
           prj_urban_ben_number: values.prj_urban_ben_number,
           prj_rural_ben_number: values.prj_rural_ben_number,
-          prj_department_id: Number(values.prj_department_id),
+          //prj_department_id: Number(values.prj_department_id),
           prj_program_id: Number(selectedPage.data.pri_id)
         };
         // save new Project
@@ -513,7 +502,7 @@ const ProjectModel = () => {
       prj_owner_id: project.prj_owner_id,
       prj_urban_ben_number: project.prj_urban_ben_number,
       prj_rural_ben_number: project.prj_rural_ben_number,
-      prj_department_id: project.prj_department_id,
+      //prj_department_id: project.prj_department_id,
       is_deletable: project.is_deletable,
       is_editable: project.is_editable,
     });
@@ -562,7 +551,7 @@ const ProjectModel = () => {
         },
       },
       {
-        header: t("prj_owner_zone_id"),
+        header: t("zone_owner"),
         accessorKey: "add_name_or",
         enableSorting: true,
         enableColumnFilter: false,
@@ -602,7 +591,7 @@ const ProjectModel = () => {
                   ? `$${value.toLocaleString()}`
                   : ""
                 : value
-                  ? `$${value.toLocaleString()}`
+                  ? `${value.toLocaleString()}`
                   : ""}
             </span>
           );
@@ -628,41 +617,40 @@ const ProjectModel = () => {
         },
       }
     ];
+    if (
+     data?.previledge?.is_role_editable==1 ||
+     data?.previledge?.is_role_deletable==1
+    ) {
+      baseColumns.push({
+        header: t("Action"),
+        accessorKey: t("Action"),
+        enableColumnFilter: false,
+        enableSorting: true,
+        cell: (cellProps) => {
+          return (
+            <div className="d-flex gap-3">
+              {(data?.previledge?.is_role_editable == 1 && cellProps.row.original?.is_editable == 1) && (
+                  <Link
+                    to="#"
+                    className="text-success"
+                    onClick={() => {
+                      const data = cellProps.row.original;
+                      handleProjectClick(data);
+                    }}
+                  >
+                    <i className="mdi mdi-pencil font-size-18" id="edittooltip" />
+                    <UncontrolledTooltip placement="top" target="edittooltip">
+                      Edit
+                    </UncontrolledTooltip>
+                  </Link>
+                )}
+            </div>
+          );
+        },
+      });
+    }
     return baseColumns;
   }, [data, handleProjectClick, onClickDelete, t]);
-
-  function renderConfiguration(cellProps) {
-    const { prj_id } = cellProps.row.original || {};
-    const filteredLinks = allowedLinks.filter((id) => linkMapping[id]);
-    return (
-      <UncontrolledDropdown>
-        <DropdownToggle
-          className="btn btn-light btn-sm"
-          type="button"
-          id={`dropdownMenuButton${prj_id}`}
-          style={{ zIndex: 1050 }}
-        >
-          <i className="bx bx-dots-vertical-rounded"></i>
-        </DropdownToggle>
-        <DropdownMenu
-          className="dropdown-menu"
-          style={{ position: "absolute", zIndex: 9999 }}
-          aria-labelledby={`dropdownMenuButton${prj_id}`}
-        >
-          {filteredLinks.map((linkId) => (
-            <Link
-              key={linkId}
-              to={`/Project/${prj_id}/${linkMapping[linkId]}`}
-              className="dropdown-item"
-            >
-              {t(linkMapping[linkId])}
-            </Link>
-          ))}
-        </DropdownMenu>
-      </UncontrolledDropdown>
-    );
-  }
-
   const getTranslatedName = (node) => {
     if (lang === "en" && node.add_name_en) return node.add_name_en;
     if (lang === "am" && node.add_name_am) return node.add_name_am;
@@ -983,53 +971,6 @@ const ProjectModel = () => {
                                 validation.errors.prj_total_actual_budget ? (
                                 <FormFeedback type="invalid">
                                   {validation.errors.prj_total_actual_budget}
-                                </FormFeedback>
-                              ) : null}
-                            </Col>
-                            <Col className="col-md-4 mb-3">
-                              <Label>
-                                {t("prj_department_id")}
-                                <span className="text-danger">*</span>
-                              </Label>
-                              <Input
-                                name="prj_department_id"
-                                type="select"
-                                className="form-select"
-                                onChange={validation.handleChange}
-                                onBlur={validation.handleBlur}
-                                value={validation.values.prj_department_id || ""}
-                                invalid={
-                                  validation.touched.prj_department_id &&
-                                    validation.errors.prj_department_id
-                                    ? true
-                                    : false
-                                }
-                              >
-                                <option value={null}>
-                                  {t("prj_select_department")}
-                                </option>
-                                {lang === "en"
-                                  ? departmentOptionsEn.map((option) => (
-                                    <option key={option.value} value={option.value}>
-                                      {t(`${option.label}`)}
-                                    </option>
-                                  ))
-                                  : lang === "am"
-                                    ? departmentOptionsAm.map((option) => (
-                                      <option key={option.value} value={option.value}>
-                                        {t(`${option.label}`)}
-                                      </option>
-                                    ))
-                                    : departmentOptionsOr.map((option) => (
-                                      <option key={option.value} value={option.value}>
-                                        {t(`${option.label}`)}
-                                      </option>
-                                    ))}
-                              </Input>
-                              {validation.touched.prj_department_id &&
-                                validation.errors.prj_department_id ? (
-                                <FormFeedback type="invalid">
-                                  {validation.errors.prj_department_id}
                                 </FormFeedback>
                               ) : null}
                             </Col>

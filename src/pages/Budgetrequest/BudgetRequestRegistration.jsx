@@ -434,8 +434,7 @@ const BudgetRequestModel = () => {
         cell: (cellProps) => {
           return (
             <div className="d-flex gap-3">
-              {(cellProps.row.original?.is_editable ||
-                cellProps.row.original?.is_role_editable) && (
+              {(data?.previledge?.is_role_editable == 1 && cellProps.row.original?.is_editable == 1) && (
                   <Button
                     size="sm"
                     color="none"
@@ -451,8 +450,7 @@ const BudgetRequestModel = () => {
                     </UncontrolledTooltip>
                   </Button>
                 )}
-              {(cellProps.row.original?.is_deletable == 9 ||
-                cellProps.row.original?.is_role_deletable == 9) && (
+              {(data?.previledge?.is_role_deletable == 9 && cellProps.row.original?.is_deletable == 9) && (
                   <div>
                     <Button
                       size="sm"

@@ -353,8 +353,8 @@ const ProjectHandoverModel = (props) => {
       },
     ];
     if (
-      data?.previledge?.is_role_editable ||
-      data?.previledge?.is_role_deletable
+     data?.previledge?.is_role_editable==1 ||
+     data?.previledge?.is_role_deletable==1
     ) {
       baseColumns.push({
         header: t("Action"),
@@ -364,8 +364,7 @@ const ProjectHandoverModel = (props) => {
         cell: (cellProps) => {
           return (
             <div className="d-flex gap-3">
-              {(cellProps.row.original?.is_editable ||
-                cellProps.row.original?.is_role_editable) && (
+{(data?.previledge?.is_role_editable == 1 && cellProps.row.original?.is_editable == 1) && (
                   <Link
                     to="#"
                     className="text-success"
@@ -380,9 +379,7 @@ const ProjectHandoverModel = (props) => {
                     </UncontrolledTooltip>
                   </Link>
                 )}
-
-              {(cellProps.row.original?.is_deletable ||
-                cellProps.row.original?.is_role_deletable) && (
+{(data?.previledge?.is_role_deletable == 9 && cellProps.row.original?.is_deletable == 9) && (
                   <Link
                     to="#"
                     className="text-danger"

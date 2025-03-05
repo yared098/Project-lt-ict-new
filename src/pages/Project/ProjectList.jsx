@@ -21,23 +21,6 @@ import "./ag-grid.css";
 import { useFetchProjectCategorys } from "../../queries/projectcategory_query";
 import { useFetchSectorInformations } from "../../queries/sectorinformation_query";
 import { useTranslation } from "react-i18next";
-import RightOffCanvas from "../../components/Common/RightOffCanvas";
-import ProjectDocument from "../../pages/Projectdocument/FileManager/index";
-import ProjectPayment from "../../pages/Projectpayment";
-import ProjectStakeholder from "../../pages/Projectstakeholder";
-import Projectcontractor from "../../pages/Projectcontractor";
-import GeoLocation from "../../pages/GeoLocation";
-import ProjectBudgetExpenditureModel from "../Projectbudgetexpenditure";
-import ProjectEmployeeModel from "../../pages/Projectemployee";
-import ProjectHandoverModel from "../Projecthandover";
-import ProjectPerformanceModel from "../Projectperformance";
-import ProjectSupplimentaryModel from "../Projectsupplimentary";
-import ProjectVariationModel from "../Projectvariation";
-import ProposalRequestModel from "../../pages/Proposalrequest";
-import Conversation from "../Conversationinformation/index1";
-import RequestInformationModel from "../../pages/Requestinformation";
-//import BudgetRequestModel from "../../pages/BudgetRequest";
-//import ProjectPlanModel from "../../pages/ProjectPlan";
 
 import {
   Button,
@@ -115,30 +98,6 @@ const ProjectModel = () => {
     setInclude,
   } = useProjectListContext();
 
-  const tabMapping = {
-    54: { label: t("project_document"), component: ProjectDocument },
-    44: { label: t("project_contractor"), component: Projectcontractor },
-    26: { label: t("project_payment"), component: ProjectPayment },
-    53: { label: t("project_stakeholder"), component: ProjectStakeholder },
-    //5: { label: "Budget Request", component: Budgetrequest },
-    33: { label: t("prj_geo_location"), component: GeoLocation },
-    //7: { label: "Budget Expenditures", component: ProjectBudgetExpenditureModel },
-    43: { label: t("project_employee"), component: ProjectEmployeeModel },
-    38: { label: t("project_handover"), component: ProjectHandoverModel },
-    37: { label: t("project_performance"), component: ProjectPerformanceModel },
-    41: {
-      label: t("project_supplimentary"),
-      component: ProjectSupplimentaryModel,
-    },
-    40: { label: t("project_variation"), component: ProjectVariationModel },
-    58: { label: t("proposal_request"), component: ProposalRequestModel },
-    57: {
-      label: t("conversation_information"),
-      component: Conversation,
-    },
-    59: { label: t("request_information"), component: RequestInformationModel },
-    //46: { label: t('project_supplimentary'), component: ProjectBudgetPlan },
-  };
   const [isAddressLoading, setIsAddressLoading] = useState(false);
 
   const { data, isLoading, error, isError, refetch } = useState(false);
@@ -169,13 +128,6 @@ const ProjectModel = () => {
     }
   }, [projectMetaData?.prj_project_status_id, searchData]);
 
-  const dynamicComponents = allowedTabs.reduce((acc, tabIndex) => {
-    const tab = tabMapping[tabIndex];
-    if (tab) {
-      acc[tab.label] = tab.component;
-    }
-    return acc;
-  }, {});
   useEffect(() => {
     setProject(data);
   }, [data]);
@@ -333,7 +285,7 @@ const ProjectModel = () => {
         headerName: t("view_details"),
         sortable: false,
         filter: false,
-        flex: 1,
+        flex: 1.5,
         cellRenderer: (params) => {
           if (params.node.footer) {
             return ""; // Suppress button for footer
@@ -349,77 +301,8 @@ const ProjectModel = () => {
         },
       },
     ];
-    // Add actions column based on privileges
-    if (1 == 1) {
-      baseColumnDefs.push({
-        headerName: t("actions"),
-        field: "actions",
-        flex: 1,
-        cellRenderer: (params) => {
-          const { is_editable, is_deletable } = params.data || {};
-          return (
-            <div className="action-icons">
-              {Object.keys(dynamicComponents).length > 0 && (
-                <Link
-                  to="#"
-                  className="text-secondary me-2"
-                  onClick={() => handleClick(params.data)}
-                >
-                  <i className="mdi mdi-cog font-size-18" id="viewtooltip" />
-                  <UncontrolledTooltip placement="top" target="viewtooltip">
-                    Project Detail
-                  </UncontrolledTooltip>
-                </Link>
-              )}
-            </div>
-          );
-        },
-      });
-    }
-    if (allowedLinks.length > 0) {
-      baseColumnDefs.push({
-        headerName: "...",
-        cellRenderer: renderConfiguration,
-        cellStyle: { overflow: "visible", zIndex: "auto" },
-        resizable: true,
-        minWidth: 80,
-        flex: 1,
-      });
-    }
     return baseColumnDefs;
   }, [data, onClickDelete, t]);
-
-  function renderConfiguration(params) {
-    const { prj_id } = params.data || {};
-    const filteredLinks = allowedLinks.filter(id => linkMapping[id]);
-    return (
-      <UncontrolledDropdown>
-        <DropdownToggle
-          className="btn btn-light btn-sm"
-          type="button"
-          id={`dropdownMenuButton${prj_id}`}
-          style={{ zIndex: 1050 }}
-        >
-          <i className="bx bx-dots-vertical-rounded"></i>
-        </DropdownToggle>
-        <DropdownMenu
-          className="dropdown-menu"
-          style={{ position: "absolute", zIndex: 9999 }}
-          aria-labelledby={`dropdownMenuButton${prj_id}`}
-        >
-          {filteredLinks.map((linkId) => (
-            <Link
-              key={linkId}
-              to={`/Project/${prj_id}/${linkMapping[linkId]}`}
-              className="dropdown-item"
-            >
-              {t(linkMapping[linkId])}
-            </Link>
-          ))}
-        </DropdownMenu>
-      </UncontrolledDropdown>
-    );
-  }
   const rowData = useMemo(() => {
     return showSearchResult ? searchData?.data : data?.data || [];
   }, [showSearchResult, searchData?.data, data?.data]);
@@ -559,18 +442,6 @@ const ProjectModel = () => {
           </div>
         </div>
       </div>
-      {showCanvas && (
-        <RightOffCanvas
-          handleClick={handleClick}
-          showCanvas={showCanvas}
-          canvasWidth={84}
-          name={projectMetaData.prj_name}
-          id={projectMetaData.prj_id}
-          status={projectMetaData?.prj_project_status_id}
-          startDate={projectMetaData?.prj_start_date_gc}
-          components={dynamicComponents}
-        />
-      )}
     </React.Fragment>
   );
 };
