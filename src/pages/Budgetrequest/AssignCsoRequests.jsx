@@ -72,8 +72,10 @@ const AssignCsoRequests = ({ request, isActive, budgetYearMap }) => {
             <Table>
               <tbody>
                 {[
-                  [t("bdr_budget_year_id"), budgetYearMap[request.bdr_budget_year_id]],
-                  [t("bdr_requested_amount"), request.bdr_requested_amount],
+                  [t("Year"), budgetYearMap[request.bdr_budget_year_id]],
+                  [t("prj_total_estimate_budget"), project?.data?.prj_total_estimate_budget],
+                  [t("prj_start_date_plan_gc"), project?.data?.prj_start_date_plan_gc],
+                  [t("prj_end_date_plan_gc"), project?.data?.prj_end_date_plan_gc],
                   [t("bdr_requested_date_gc"), request.bdr_requested_date_gc],
                   [t("bdr_description"), request.bdr_description],
                 ].map(([label, value]) => (

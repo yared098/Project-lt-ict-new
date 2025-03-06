@@ -87,6 +87,12 @@ const AuthMiddleware = ({ children }) => {
     return projectPathRegex.test(path);
   };
 
+  const isProjectDetailPath = (path) => {
+    const projectDetailPathRegex = /^\/projectdetail\/\d+$/;
+    return projectDetailPathRegex.test(path);
+  };
+
+
   if (isProjectPath(currentPath)) {
     allowedPaths.push(
       "/Project/:id",
@@ -120,11 +126,11 @@ const AuthMiddleware = ({ children }) => {
   }
 
   if (!authPaths.includes(currentPath) && !isProjectPath(currentPath)) {
-    //return <Navigate to="/not_found" />;
+    // return <Navigate to="/not_found" />;
   }
 
   if (!allowedPaths.includes(currentPath) && !isProjectPath(currentPath)) {
-    //return <Navigate to="/unauthorized" />;
+    // return <Navigate to="/unauthorized" />;
   }
 
   return <React.Fragment>{children}</React.Fragment>;

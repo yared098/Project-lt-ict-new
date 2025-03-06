@@ -57,6 +57,7 @@ import SearchForProject from "../../components/Common/SearchForProject";
 import ExportToExcel from "../../components/Common/ExportToExcel";
 import ExportToPDF from "../../components/Common/ExportToPdf";
 import PrintPage from "../../components/Common/PrintPage";
+import DatePicker from "../../components/Common/DatePicker";
 
 const linkMapping = {
   34: "budget_request",
@@ -491,6 +492,13 @@ const ProjectModel = () => {
         sortable: false,
         filter: false,
         flex: 1,
+      },
+      {
+        field: "cso_name",
+        headerName: t("cso_name"),
+        sortable: true,
+        filter: "agTextColumnFilter",
+        flex: 5
       },
       {
         field: "prj_name",
@@ -974,7 +982,21 @@ const ProjectModel = () => {
                             </FormFeedback>
                           ) : null}
                         </Col>
-                        <Col className="col-md-6 mb-3">
+                        <Col className="col-md-4 mb-3">
+                          <DatePicker
+                            isRequired={true}
+                            componentId={"prj_start_date_plan_gc"}
+                            validation={validation}
+                          />
+                        </Col>
+                        <Col className="col-md-4 mb-3">
+                          <DatePicker
+                            isRequired={true}
+                            componentId={"prj_end_date_plan_gc"}
+                            validation={validation}
+                            minDate={validation.values.prj_start_date_plan_gc} />
+                        </Col>
+                        <Col className="col-md-4 mb-3">
                           <Label>{t("prj_urban_ben_number")}</Label>
                           <Input
                             name="prj_urban_ben_number"
@@ -997,7 +1019,7 @@ const ProjectModel = () => {
                             </FormFeedback>
                           ) : null}
                         </Col>
-                        <Col className="col-md-6 mb-3">
+                        <Col className="col-md-4 mb-3">
                           <Label>{t("prj_rural_ben_number")}</Label>
                           <Input
                             name="prj_rural_ben_number"
@@ -1025,6 +1047,7 @@ const ProjectModel = () => {
                           <Input
                             name="prj_outcome"
                             type="textarea"
+                            rows={3}
                             placeholder={t("prj_outcome")}
                             onChange={validation.handleChange}
                             onBlur={validation.handleBlur}
@@ -1049,6 +1072,7 @@ const ProjectModel = () => {
                           <Input
                             name="prj_remark"
                             type="textarea"
+                            rows={3}
                             placeholder={t("prj_remark")}
                             onChange={validation.handleChange}
                             onBlur={validation.handleBlur}

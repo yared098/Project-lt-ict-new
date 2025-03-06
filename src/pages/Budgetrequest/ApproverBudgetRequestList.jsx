@@ -70,15 +70,15 @@ const ApproverBudgetRequestList = () => {
 
   const storedUser = JSON.parse(localStorage.getItem("authUser"));
   const user = storedUser?.user;
- const depId = user?.usr_officer_id > 0
+  const depId = user?.usr_officer_id > 0
     ? user.usr_officer_id
     : user?.usr_team_id > 0
       ? user.usr_team_id
       : user?.usr_directorate_id > 0
         ? user.usr_directorate_id
         : user?.usr_department_id > 0
-        ? user.usr_department_id
-        : null;
+          ? user.usr_department_id
+          : null;
 
   //const depId = 1
   const { data: rqfData, isLoading: rqfLoading } = useFetchRequestFollowups()
@@ -194,7 +194,7 @@ const ApproverBudgetRequestList = () => {
         flex: .5
       },
       {
-        headerName: t("bdr_budget_year_id"),
+        headerName: t("Year"),
         field: "bdy_name",
         sortable: true,
         filter: true,
@@ -223,38 +223,38 @@ const ApproverBudgetRequestList = () => {
           return truncateText(params.data.prj_code, 30) || "-";
         },
       },
-      {
-        headerName: t("bdr_requested_amount"),
-        field: "bdr_requested_amount",
-        sortable: true,
-        filter: true,
-        flex: 1.2,
-        valueFormatter: (params) => {
-          if (params.value != null) {
-            return new Intl.NumberFormat("en-US", {
-              minimumFractionDigits: 2,
-              maximumFractionDigits: 2,
-            }).format(params.value);
-          }
-          return "0.00"; // Default value if null or undefined
-        },
-      },
-      {
-        headerName: t("bdr_released_amount"),
-        field: "bdr_released_amount",
-        sortable: true,
-        filter: true,
-        flex: 1.2,
-        valueFormatter: (params) => {
-          if (params.value != null) {
-            return new Intl.NumberFormat("en-US", {
-              minimumFractionDigits: 2,
-              maximumFractionDigits: 2,
-            }).format(params.value);
-          }
-          return "0.00"; // Default value if null or undefined
-        },
-      },
+      // {
+      //   headerName: t("bdr_requested_amount"),
+      //   field: "bdr_requested_amount",
+      //   sortable: true,
+      //   filter: true,
+      //   flex: 1.2,
+      //   valueFormatter: (params) => {
+      //     if (params.value != null) {
+      //       return new Intl.NumberFormat("en-US", {
+      //         minimumFractionDigits: 2,
+      //         maximumFractionDigits: 2,
+      //       }).format(params.value);
+      //     }
+      //     return "0.00"; // Default value if null or undefined
+      //   },
+      // },
+      // {
+      //   headerName: t("bdr_released_amount"),
+      //   field: "bdr_released_amount",
+      //   sortable: true,
+      //   filter: true,
+      //   flex: 1.2,
+      //   valueFormatter: (params) => {
+      //     if (params.value != null) {
+      //       return new Intl.NumberFormat("en-US", {
+      //         minimumFractionDigits: 2,
+      //         maximumFractionDigits: 2,
+      //       }).format(params.value);
+      //     }
+      //     return "0.00"; // Default value if null or undefined
+      //   },
+      // },
       {
         headerName: t("bdr_requested_date_gc"),
         field: "bdr_requested_date_gc",
@@ -265,16 +265,16 @@ const ApproverBudgetRequestList = () => {
           return truncateText(params.data.bdr_requested_date_gc, 30) || "-";
         },
       },
-      {
-        headerName: t("bdr_released_date_gc"),
-        field: "bdr_released_date_gc",
-        sortable: true,
-        filter: "agDateColumnFilter",
-        flex: 1,
-        cellRenderer: (params) => {
-          return truncateText(params.data.bdr_released_date_gc, 30) || "-";
-        },
-      },
+      // {
+      //   headerName: t("bdr_released_date_gc"),
+      //   field: "bdr_released_date_gc",
+      //   sortable: true,
+      //   filter: "agDateColumnFilter",
+      //   flex: 1,
+      //   cellRenderer: (params) => {
+      //     return truncateText(params.data.bdr_released_date_gc, 30) || "-";
+      //   },
+      // },
       {
         headerName: t("forwarded"),
         field: "forwarded",
@@ -305,26 +305,26 @@ const ApproverBudgetRequestList = () => {
           );
         },
       },
-      {
-        headerName: t("view_detail"),
-        field: "view_detail",
-        flex: 1,
-        cellRenderer: (params) => {
-          return (
-            <Button
-              type="button"
-              color="primary"
-              className="btn-sm"
-              onClick={() => {
-                toggleDetailModal();
-                setTransaction(params.data);
-              }}
-            >
-              {t("view_detail")}
-            </Button>
-          );
-        },
-      },
+      // {
+      //   headerName: t("view_detail"),
+      //   field: "view_detail",
+      //   flex: 1,
+      //   cellRenderer: (params) => {
+      //     return (
+      //       <Button
+      //         type="button"
+      //         color="primary"
+      //         className="btn-sm"
+      //         onClick={() => {
+      //           toggleDetailModal();
+      //           setTransaction(params.data);
+      //         }}
+      //       >
+      //         {t("view_detail")}
+      //       </Button>
+      //     );
+      //   },
+      // },
       {
         headerName: t("take_action"),
         field: "take_action",
@@ -468,7 +468,7 @@ const ApproverBudgetRequestList = () => {
             <div className="w-100">
               <AdvancedSearch
                 searchHook={useSearchBudgetRequestforApproval}
-                dateSearchKeys={["budget_request_date"]}
+                // dateSearchKeys={["budget_request_date"]}
                 textSearchKeys={["prj_name", "prj_code"]}
                 dropdownSearchKeys={[
                   {

@@ -35,6 +35,7 @@ import { TabWrapper } from "../../components/Common/DetailViewWrapper";
 import { Link } from "react-router-dom";
 import ActionForm from "./ActionForm";
 import { useFetchBudgetRequestAmounts } from "../../queries/budgetrequestamount_query";
+import { useFetchProject } from "../../queries/project_query";
 import TableContainer from "../../components/Common/TableContainer";
 import { useFetchBudgetRequestTasks } from "../../queries/budgetrequesttask_query";
 import { useFetchBudgetExSources } from "../../queries/budgetexsource_query";
@@ -56,11 +57,16 @@ const ApproverBudgetRequestListModal = (props) => {
   const { t } = useTranslation();
   const { isOpen, toggle, transaction, budgetYearMap = {} } = props;
   const { mutateAsync, isPending } = useUpdateBudgetRequestApproval();
+
   const { data: statusData } = useFetchRequestStatuss()
   const statusOptions = createSelectOptions(statusData?.data || [], "rqs_id", "rqs_name_en")
-
   const getStatusOption = (value) =>
     statusOptions.find((option) => option.value === value) || null;
+
+  const projectId = transaction?.bdr_project_id;
+  const storedUser = JSON.parse(localStorage.getItem("authUser"));
+  const userId = storedUser?.user.usr_id;
+  const { data: project, isLoading: isProjectLoading } = useFetchProject(projectId, userId, isOpen);
 
   const handleUpdateBudgetRequest = async (data) => {
     try {
@@ -127,28 +133,23 @@ const ApproverBudgetRequestListModal = (props) => {
             <Card>
               <CardBody>
                 <h5 className="fw-semibold">Overview</h5>
-                <div className="table-responsive">
-                  <table className="table">
-                    <tbody>
-                      <tr>
-                        <th scope="col">{t("bdr_budget_year_id")}</th>
-                        <td>{budgetYearMap[transaction.bdr_budget_year_id]}</td>
+                <Table>
+                  <tbody>
+                    {[
+                      [t("Year"), budgetYearMap[transaction.bdr_budget_year_id]],
+                      [t("prj_total_estimate_budget"), project?.data?.prj_total_estimate_budget],
+                      [t("prj_start_date_plan_gc"), project?.data?.prj_start_date_plan_gc],
+                      [t("prj_end_date_plan_gc"), project?.data?.prj_end_date_plan_gc],
+                      [t("bdr_requested_date_gc"), transaction.bdr_requested_date_gc],
+                      [t("bdr_description"), transaction.bdr_description],
+                    ].map(([label, value]) => (
+                      <tr key={label}>
+                        <th>{label}</th>
+                        <td>{value}</td>
                       </tr>
-                      <tr>
-                        <th>{t("bdr_requested_amount")}</th>
-                        <td>{transaction.bdr_requested_amount}</td>
-                      </tr>
-                      <tr>
-                        <th>{t("bdr_requested_date_gc")}</th>
-                        <td>{transaction.bdr_requested_date_gc}</td>
-                      </tr>
-                      <tr>
-                        <th>{t("bdr_description")}</th>
-                        <td>{transaction.bdr_description}</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
+                    ))}
+                  </tbody>
+                </Table>
               </CardBody>
             </Card>
           </Col>
@@ -258,13 +259,6 @@ const ApproverBudgetRequestListModal = (props) => {
             </Card>
           </Col>
         </Row>
-      ),
-    },
-    {
-      id: "details",
-      label: `${t("details")}`,
-      content: (
-        <TakeActionForm data={transaction} />
       ),
     },
     {

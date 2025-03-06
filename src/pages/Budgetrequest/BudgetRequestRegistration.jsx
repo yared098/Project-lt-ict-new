@@ -279,7 +279,7 @@ const BudgetRequestModel = () => {
     const baseColumns = [
       {
         header: "",
-        accessorKey: "bdr_budget_year_id",
+        accessorKey: "Year",
         enableColumnFilter: false,
         enableSorting: true,
         cell: (cellProps) => {
@@ -290,34 +290,34 @@ const BudgetRequestModel = () => {
           );
         },
       },
-      {
-        header: "",
-        accessorKey: "bdr_requested_amount",
-        enableColumnFilter: false,
-        enableSorting: true,
-        cell: (cellProps) => {
-          return (
-            <span>
-              {truncateText(Number(cellProps.row.original.bdr_requested_amount).toLocaleString(), 30) ||
-                "-"}
-            </span>
-          );
-        },
-      },
-      {
-        header: "",
-        accessorKey: "bdr_released_amount",
-        enableColumnFilter: false,
-        enableSorting: true,
-        cell: (cellProps) => {
-          return (
-            <span>
-              {truncateText(Number(cellProps.row.original.bdr_released_amount).toLocaleString(), 30) ||
-                "-"}
-            </span>
-          );
-        },
-      },
+      // {
+      //   header: "",
+      //   accessorKey: "bdr_requested_amount",
+      //   enableColumnFilter: false,
+      //   enableSorting: true,
+      //   cell: (cellProps) => {
+      //     return (
+      //       <span>
+      //         {truncateText(Number(cellProps.row.original.bdr_requested_amount).toLocaleString(), 30) ||
+      //           "-"}
+      //       </span>
+      //     );
+      //   },
+      // },
+      // {
+      //   header: "",
+      //   accessorKey: "bdr_released_amount",
+      //   enableColumnFilter: false,
+      //   enableSorting: true,
+      //   cell: (cellProps) => {
+      //     return (
+      //       <span>
+      //         {truncateText(Number(cellProps.row.original.bdr_released_amount).toLocaleString(), 30) ||
+      //           "-"}
+      //       </span>
+      //     );
+      //   },
+      // },
       {
         header: "",
         accessorKey: "bdr_requested_date_gc",
@@ -332,20 +332,20 @@ const BudgetRequestModel = () => {
           );
         },
       },
-      {
-        header: "",
-        accessorKey: "bdr_released_date_gc",
-        enableColumnFilter: false,
-        enableSorting: true,
-        cell: (cellProps) => {
-          return (
-            <span>
-              {truncateText(cellProps.row.original.bdr_released_date_gc, 30) ||
-                "-"}
-            </span>
-          );
-        },
-      },
+      // {
+      //   header: "",
+      //   accessorKey: "bdr_released_date_gc",
+      //   enableColumnFilter: false,
+      //   enableSorting: true,
+      //   cell: (cellProps) => {
+      //     return (
+      //       <span>
+      //         {truncateText(cellProps.row.original.bdr_released_date_gc, 30) ||
+      //           "-"}
+      //       </span>
+      //     );
+      //   },
+      // },
       {
         headerName: t("bdr_request_status"),
         accessorKey: "bdr_request_status",
@@ -576,8 +576,8 @@ const BudgetRequestModel = () => {
       <Modal isOpen={modal} toggle={toggle} className="modal-xl">
         <ModalHeader toggle={toggle} tag="h4">
           {!!isEdit
-            ? t("edit") + " " + t("budget_request")
-            : t("add") + " " + t("budget_request")}
+            ? t("edit") + " " + t("proposal_request")
+            : t("add") + " " + t("proposal_request")}
         </ModalHeader>
         <ModalBody>
           <Form

@@ -63,7 +63,15 @@ const ProjectsOverview = () => {
   }), [t]);
 
   // Allowed tabs based on project data
-  const allowedTabs = useMemo(() => data?.allowedTabs || [], [data]);
+  const allowedTabs = useMemo(() => {
+    if (!data?.allowedTabs) return [];
+    let tabs = [...data.allowedTabs];
+    if (data?.data?.status_id < 5 || data?.data?.status_id > 7) {
+      tabs = tabs.filter(tab => tab !== 59);
+    }
+    return tabs;
+  }, [data]);
+
 
   // Dynamic components based on allowed tabs
   const dynamicComponents = useMemo(() => (
