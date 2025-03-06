@@ -21,7 +21,7 @@ pipeline {
         SSL_CERTIFICATE      = '/home/certs/fullchain.pem'
         SSL_CERTIFICATE_KEY  = '/home/certs/privkey.pem'
 
-        PORT_EXT             = '1212'
+        PORT_EXT             = '1219'
         PORT_INT             = '80'
         
         // Container name
