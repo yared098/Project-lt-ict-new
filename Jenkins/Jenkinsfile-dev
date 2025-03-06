@@ -25,7 +25,7 @@ pipeline {
         PORT_INT             = '80'
         
         // Container name
-        CONTAINER_NAME       = 'react-app-devx'
+        CONTAINER_NAME       = 'react-app-cso'
 
         // Enable BuildKit
         DOCKER_BUILDKIT      = '1'
@@ -52,7 +52,7 @@ pipeline {
                         git clean -fdx        # Remove all untracked files and directories
                         git reset --hard      # Reset any changes to tracked files
                         
-                        echo "Pulling the latest code from the main branch..."
+                        echo "Pulling the latest code from the cso branch..."
                         git pull origin cso
                     '''
                 }
