@@ -10,7 +10,7 @@ pipeline {
         NODE_OPTIONS         = '--max-old-space-size=4096'
         
         // Docker
-        DOCKER_IMAGE         = 'otecpms/react-app-devx'
+        DOCKER_IMAGE         = 'otecpms/react-app-dev-cso'
         DOCKER_TAG           = 'latest'
         FULL_DOCKER_IMAGE    = "${DOCKER_IMAGE}:${DOCKER_TAG}"
         REGISTRY_URL         = 'https://registry.hub.docker.com'
