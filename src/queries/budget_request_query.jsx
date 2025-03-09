@@ -23,13 +23,12 @@ export const useFetchBudgetRequests = (params = {}) => {
 };
 
 //search budget_year
-export const useSearchBudgetRequests = (searchParams = {}) => {
+export const useSearchBudgetRequests = (searchParams = {}, isActive) => {
   return useQuery({
     queryKey: [...BUDGET_REQUESTS_QUERY_KEY, searchParams],
     queryFn: () => {
-      // If searchParams is empty, return an empty result or handle it accordingly
       if (Object.keys(searchParams).length === 0) {
-        return Promise.resolve([]); // or return null, or handle it as per your requirement
+        return Promise.resolve([]);
       }
       return getBudgetRequest(searchParams);
     },
@@ -37,7 +36,7 @@ export const useSearchBudgetRequests = (searchParams = {}) => {
     gcTime: 1000 * 60 * 5,
     refetchOnWindowFocus: false,
     refetchOnMount: false,
-    enabled: true, // Always enable the query
+    enabled: isActive, 
   });
 };
 export const useSearchBudgetRequestforApproval = (searchParams = {}) => {

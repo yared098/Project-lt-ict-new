@@ -1,17 +1,15 @@
 import React, { useEffect, useMemo, useState } from "react";
 import PropTypes from "prop-types";
-import { Link, useLocation, useParams } from "react-router-dom";
 import { isEmpty, update } from "lodash";
 import TableContainer from "../../components/Common/TableContainer";
 import * as Yup from "yup";
 import { useFormik } from "formik";
 import { Spinner } from "reactstrap";
 import Spinners from "../../components/Common/Spinner";
-//import components
-import Breadcrumbs from "../../components/Common/Breadcrumb";
 import DeleteModal from "../../components/Common/DeleteModal";
 import {
   useFetchBudgetRequests,
+  useSearchBudgetRequests,
   useAddBudgetRequest,
   useUpdateBudgetRequest,
   useDeleteBudgetRequest,
@@ -35,26 +33,19 @@ import {
   Input,
   FormFeedback,
   Label,
-  Card,
-  CardBody,
   Badge,
 } from "reactstrap";
 import { toast } from "react-toastify";
 import FetchErrorHandler from "../../components/Common/FetchErrorHandler";
-import ProjectDetailColapse from "../Project/ProjectDetailColapse";
 import RightOffCanvas from "../../components/Common/RightOffCanvas";
 import ActionModal from "./ActionModal";
 import AttachFileModal from "../../components/Common/AttachFileModal";
 import ConvInfoModal from "../../pages/Conversationinformation/ConvInfoModal"
 import {
   alphanumericValidation,
-  formattedAmountValidation
 } from "../../utils/Validation/validation";
 import DatePicker from "../../components/Common/DatePicker";
 import { PAGE_ID } from "../../constants/constantFile";
-import FormattedAmountField from "../../components/Common/FormattedAmountField";
-import { convertToNumericValue } from "../../utils/commonMethods";
-
 
 const truncateText = (text, maxLength) => {
   if (typeof text !== "string") {
@@ -63,10 +54,8 @@ const truncateText = (text, maxLength) => {
   return text.length <= maxLength ? text : `${text.substring(0, maxLength)}...`;
 };
 
-const BudgetRequestModel = () => {
-  const location = useLocation();
-  const id = Number(location.pathname.split("/")[2]);
-  const param = { project_id: id, request_type: "single" };
+const BudgetRequestModel = ({ projectId, isActive }) => {
+  const param = { project_id: projectId, request_type: "single" };
   const { t } = useTranslation();
   const [modal, setModal] = useState(false);
   const [modal1, setModal1] = useState(false);
@@ -74,27 +63,21 @@ const BudgetRequestModel = () => {
   const [fileModal, setFileModal] = useState(false)
   const [convModal, setConvModal] = useState(false)
   const [isEdit, setIsEdit] = useState(false);
-  const [isExpanded, setIsExpanded] = useState(true);
   const [budgetRequest, setBudgetRequest] = useState(null);
-  const [isSearchLoading, setIsSearchLoading] = useState(false);
-  const [searcherror, setSearchError] = useState(null);
-  const [searchLoading, setSearchLoading] = useState(false); // Search-specific loading state
-  const [showSearchResults, setShowSearchResults] = useState(false); // To determine if search results should be displayed
-
   const [budgetRequestMetaData, setBudgetRequestMetaData] = useState([]);
   const [showCanvas, setShowCanvas] = useState(false);
 
   const { data, isLoading, isError, error, refetch } =
-    useFetchBudgetRequests(param);
+    useSearchBudgetRequests(param, isActive);
   const { data: budgetYearData } = usePopulateBudgetYears();
   const { data: bgYearsOptionsData } = useFetchBudgetYears();
   const addBudgetRequest = useAddBudgetRequest();
   const updateBudgetRequest = useUpdateBudgetRequest();
   const deleteBudgetRequest = useDeleteBudgetRequest();
-
+  
   const storedUser = JSON.parse(localStorage.getItem("authUser"));
   const userId = storedUser?.user.usr_id;
-  const project = useFetchProject(id, userId, true);
+  const project = useFetchProject(projectId, userId, true);
 
   const handleAddBudgetRequest = async (data) => {
     try {
@@ -128,14 +111,13 @@ const BudgetRequestModel = () => {
 
   // validation
   const validation = useFormik({
-    // enableReinitialize: use this flag when initial values need to be changed
     enableReinitialize: true,
     initialValues: {
       bdr_budget_year_id:
         (budgetRequest && budgetRequest.bdr_budget_year_id) || "",
       bdr_requested_amount:
         (budgetRequest && budgetRequest.bdr_requested_amount) || "",
-      bdr_project_id: id,
+      bdr_project_id: projectId,
       bdr_requested_date_ec:
         (budgetRequest && budgetRequest.bdr_requested_date_ec) || "",
       bdr_requested_date_gc:
@@ -152,7 +134,6 @@ const BudgetRequestModel = () => {
 
     validationSchema: Yup.object({
       bdr_budget_year_id: Yup.string().required(t("bdr_budget_year_id")),
-      // bdr_requested_amount: formattedAmountValidation(1000, 10000000000, true),
       bdr_requested_date_gc: Yup.string().required(t("bdr_requested_date_gc")),
       bdr_description: alphanumericValidation(3, 425, false),
     }),
@@ -175,7 +156,7 @@ const BudgetRequestModel = () => {
       } else {
         const newBudgetRequest = {
           bdr_budget_year_id: parseInt(values.bdr_budget_year_id),
-          bdr_project_id: id,
+          bdr_project_id: projectId,
           bdr_requested_amount: 1000,
           bdr_requested_date_ec: values.bdr_requested_date_ec,
           bdr_requested_date_gc: values.bdr_requested_date_gc,
@@ -252,11 +233,11 @@ const BudgetRequestModel = () => {
       try {
         const id = budgetRequest.bdr_id;
         await deleteBudgetRequest.mutateAsync(id);
-        toast.success(`Budget Request ${id} deleted successfully`, {
+        toast.success(t("delete_success"), {
           autoClose: 2000,
         });
       } catch (error) {
-        toast.error(`Failed to delete Budget Request ${budgetRequest.bdr_id}`, {
+        toast.error(t("delete_failure"), {
           autoClose: 2000,
         });
       }
@@ -290,34 +271,6 @@ const BudgetRequestModel = () => {
           );
         },
       },
-      // {
-      //   header: "",
-      //   accessorKey: "bdr_requested_amount",
-      //   enableColumnFilter: false,
-      //   enableSorting: true,
-      //   cell: (cellProps) => {
-      //     return (
-      //       <span>
-      //         {truncateText(Number(cellProps.row.original.bdr_requested_amount).toLocaleString(), 30) ||
-      //           "-"}
-      //       </span>
-      //     );
-      //   },
-      // },
-      // {
-      //   header: "",
-      //   accessorKey: "bdr_released_amount",
-      //   enableColumnFilter: false,
-      //   enableSorting: true,
-      //   cell: (cellProps) => {
-      //     return (
-      //       <span>
-      //         {truncateText(Number(cellProps.row.original.bdr_released_amount).toLocaleString(), 30) ||
-      //           "-"}
-      //       </span>
-      //     );
-      //   },
-      // },
       {
         header: "",
         accessorKey: "bdr_requested_date_gc",
@@ -332,20 +285,6 @@ const BudgetRequestModel = () => {
           );
         },
       },
-      // {
-      //   header: "",
-      //   accessorKey: "bdr_released_date_gc",
-      //   enableColumnFilter: false,
-      //   enableSorting: true,
-      //   cell: (cellProps) => {
-      //     return (
-      //       <span>
-      //         {truncateText(cellProps.row.original.bdr_released_date_gc, 30) ||
-      //           "-"}
-      //       </span>
-      //     );
-      //   },
-      // },
       {
         headerName: t("bdr_request_status"),
         accessorKey: "bdr_request_status",
@@ -489,37 +428,12 @@ const BudgetRequestModel = () => {
         },
       });
     }
-    if (project?.data?.request_role == "approver") {
-      baseColumns.push({
-        header: t("take_action"),
-        enableColumnFilter: false,
-        enableSorting: true,
-        cell: (cellProps) => {
-          return (
-            <Button
-              type="button"
-              color="primary"
-              className="btn-sm"
-              onClick={() => {
-                const data = cellProps.row.original;
-                toggleActionModal();
-                setTransaction(data);
-              }}
-            >
-              {t("take_action")}
-            </Button>
-          );
-        },
-      });
-    }
-
     return baseColumns;
   }, [handleBudgetRequestClick, toggleViewModal, onClickDelete]);
 
   if (isError) {
     return <FetchErrorHandler error={error} refetch={refetch} />;
   }
-
   return (
     <React.Fragment>
       <BudgetRequestModal
@@ -535,7 +449,7 @@ const BudgetRequestModel = () => {
       <AttachFileModal
         isOpen={fileModal}
         toggle={toggleFileModal}
-        projectId={id}
+        projectId={projectId}
         ownerTypeId={PAGE_ID.PROJ_BUDGET_REQUEST}
         ownerId={transaction?.bdr_id}
       />
@@ -551,13 +465,12 @@ const BudgetRequestModel = () => {
         onCloseClick={() => setDeleteModal(false)}
         isLoading={deleteBudgetRequest.isPending}
       />
-      {isLoading || isSearchLoading || project.isLoading ? (
+      {isLoading || project.isLoading ? (
         <Spinners />
       ) : (
-
         <TableContainer
           columns={columns}
-          data={data?.data}
+          data={data?.data || []}
           isGlobalFilter={true}
           isAddButton={data?.previledge?.is_role_can_add == 1}
           isCustomPageSize={true}
@@ -590,7 +503,7 @@ const BudgetRequestModel = () => {
             <Row>
               <Col className="col-md-6 mb-3">
                 <Label>
-                  {t("bdr_budget_year_id")}
+                  {t("Year")}
                   <span className="text-danger">*</span>
                 </Label>
                 <Input
@@ -608,7 +521,7 @@ const BudgetRequestModel = () => {
                   }
                   maxLength={20}
                 >
-                  <option value="">Select Budget Year</option>
+                  <option value="">Select Year</option>
                   {budgetYearData?.data?.map((data) => (
                     <option key={data.bdy_id} value={data.bdy_id}>
                       {data.bdy_name}
@@ -622,38 +535,6 @@ const BudgetRequestModel = () => {
                   </FormFeedback>
                 ) : null}
               </Col>
-              {/* <Col className="col-md-6 mb-3">
-                <FormattedAmountField
-                  validation={validation}
-                  fieldId={"bdr_requested_amount"}
-                  isRequired={true}
-                />
-              </Col> */}
-              {/* <Col className="col-md-6 mb-3">
-                  <Label>{t("bdr_released_amount")}</Label>
-                  <Input
-                    name="bdr_released_amount"
-                    type="text"
-                    placeholder={t("insert_status_name_amharic")}
-                    onChange={validation.handleChange}
-                    onBlur={validation.handleBlur}
-                    value={validation.values.bdr_released_amount || ""}
-                    invalid={
-                      validation.touched.bdr_released_amount &&
-                      validation.errors.bdr_released_amount
-                        ? true
-                        : false
-                    }
-                    maxLength={20}
-                  />
-                  {validation.touched.bdr_released_amount &&
-                  validation.errors.bdr_released_amount ? (
-                    <FormFeedback type="invalid">
-                      {validation.errors.bdr_released_amount}
-                    </FormFeedback>
-                  ) : null}
-                </Col> */}
-
               <Col className="col-md-6 mb-3">
                 <DatePicker
                   isRequired="true"
@@ -661,54 +542,6 @@ const BudgetRequestModel = () => {
                   componentId="bdr_requested_date_gc"
                 />
               </Col>
-              {/* <Col className="col-md-6 mb-3">
-                  <Label>{t("bdr_released_date_ec")}</Label>
-                  <Input
-                    name="bdr_released_date_ec"
-                    type="text"
-                    placeholder={t("insert_status_name_amharic")}
-                    onChange={validation.handleChange}
-                    onBlur={validation.handleBlur}
-                    value={validation.values.bdr_released_date_ec || ""}
-                    invalid={
-                      validation.touched.bdr_released_date_ec &&
-                      validation.errors.bdr_released_date_ec
-                        ? true
-                        : false
-                    }
-                    maxLength={20}
-                  />
-                  {validation.touched.bdr_released_date_ec &&
-                  validation.errors.bdr_released_date_ec ? (
-                    <FormFeedback type="invalid">
-                      {validation.errors.bdr_released_date_ec}
-                    </FormFeedback>
-                  ) : null}
-                </Col> */}
-              {/* <Col className="col-md-6 mb-3">
-                  <Label>{t("bdr_released_date_gc")}</Label>
-                  <Input
-                    name="bdr_released_date_gc"
-                    type="text"
-                    placeholder={t("insert_status_name_amharic")}
-                    onChange={validation.handleChange}
-                    onBlur={validation.handleBlur}
-                    value={validation.values.bdr_released_date_gc || ""}
-                    invalid={
-                      validation.touched.bdr_released_date_gc &&
-                      validation.errors.bdr_released_date_gc
-                        ? true
-                        : false
-                    }
-                    maxLength={20}
-                  />
-                  {validation.touched.bdr_released_date_gc &&
-                  validation.errors.bdr_released_date_gc ? (
-                    <FormFeedback type="invalid">
-                      {validation.errors.bdr_released_date_gc}
-                    </FormFeedback>
-                  ) : null}
-                </Col> */}
               <Col className="col-md-12 mb-3">
                 <Label>{t("bdr_description")}</Label>
                 <Input
@@ -733,32 +566,6 @@ const BudgetRequestModel = () => {
                   </FormFeedback>
                 ) : null}
               </Col>
-              {/* <Col className="col-md-6 mb-3">
-                  <Label>{t("bdr_request_status")}</Label>
-                  <Input
-                    name="bdr_request_status"
-                    type="select"
-                    className="form-select"
-                    onChange={(e) => {
-                      validation.setFieldValue(
-                        "bdr_request_status",
-                        Number(e.target.value)
-                      );
-                    }}
-                    onBlur={validation.handleBlur}
-                    value={validation.values.bdr_request_status}
-                  >
-                    <option value={""}>Select status</option>
-                    <option value={"Approved"}>{t("Approved")}</option>
-                    <option value={"Rejected"}>{t("Rejected")}</option>
-                  </Input>
-                  {validation.touched.bdr_request_status &&
-                  validation.errors.bdr_request_status ? (
-                    <FormFeedback type="invalid">
-                      {validation.errors.bdr_request_status}
-                    </FormFeedback>
-                  ) : null}
-                </Col> */}
             </Row>
             <Row>
               <Col>

@@ -79,26 +79,57 @@ const ProjectModel = () => {
   const [quickFilterText, setQuickFilterText] = useState("");
   const [selectedRows, setSelectedRows] = useState([]);
   const gridRef = useRef(null);
-  const {
-    setSearchResults,
-    isSearchLoading,
-    showSearchResult,
-    setShowSearchResult,
-    projectParams,
-    setProjectParams,
-    setPrjLocationRegionId,
-    setPrjLocationZoneId,
-    setPrjLocationWoredaId,
-    setSelectedLocations,
-    params,
-    setParams,
-    searchParams,
-    setSearchParams,
-    searchData,
-    setInclude,
-  } = useProjectListContext();
-
   const [isAddressLoading, setIsAddressLoading] = useState(false);
+
+  const [searchResults, setSearchResults] = useState(null);
+  const [isSearchLoading, setIsSearchLoading] = useState(false);
+  const [searchError, setSearchError] = useState(null);
+  const [showSearchResult, setShowSearchResult] = useState(false);
+
+  const [projectParams, setProjectParams] = useState({});
+  const [prjLocationRegionId, setPrjLocationRegionId] = useState(null);
+  const [prjLocationZoneId, setPrjLocationZoneId] = useState(null);
+  const [prjLocationWoredaId, setPrjLocationWoredaId] = useState(null);
+  const [include, setInclude] = useState(0);
+
+  const [params, setParams] = useState({});
+  const [searchParams, setSearchParams] = useState({});
+  const {
+    data: searchData,
+    error: srError,
+    isError: isSrError,
+    refetch: search,
+  } = useSearchProjects(searchParams);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setIsSearchLoading(true);
+        await search();
+        setShowSearchResult(true);
+      } catch (error) {
+        console.error("Error during search:", error);
+      } finally {
+        setIsSearchLoading(false);
+      }
+    };
+    if (Object.keys(searchParams).length > 0) {
+      fetchData();
+    }
+  }, [searchParams]);
+
+  useEffect(() => {
+    setProjectParams({
+      ...(prjLocationRegionId && {
+        prj_location_region_id: prjLocationRegionId,
+      }),
+      ...(prjLocationZoneId && { prj_location_zone_id: prjLocationZoneId }),
+      ...(prjLocationWoredaId && {
+        prj_location_woreda_id: prjLocationWoredaId,
+      }),
+      ...(include === 1 && { include: include }),
+    });
+  }, [prjLocationRegionId, prjLocationZoneId, prjLocationWoredaId, include]);
 
   const storedUser = JSON.parse(localStorage.getItem("authUser"));
   const userId = storedUser?.user.usr_id;
@@ -670,9 +701,9 @@ const ProjectModel = () => {
                       md="6"
                       className="text-md-end d-flex align-items-center justify-content-end gap-2"
                     >
-                      <Button color="success" onClick={handleProjectsClicks}>
+                      {/* <Button color="success" onClick={handleProjectsClicks}>
                         {t("add")}
-                      </Button>
+                      </Button> */}
                       <ExportToExcel
                         tableData={searchData?.data || []}
                         tablename={"projects"}

@@ -3,8 +3,7 @@ import { Navigate } from "react-router-dom";
 
 import Dashboard from "../pages/Dashboard/index";
 import Login from "../pages/Authentication/Login";
-import ProjectProvider from "../context/ProjectContext";
-import ProjectListProvider from "../context/ProjectListContext";
+
 const UsersProfile = lazy(() => import("../pages/Profile"));
 const ProjectPaymentList = lazy(() =>
   import("../pages/Projectpayment/ProjectPaymentList")
@@ -211,63 +210,13 @@ const authProtectedRoutes = [
   { path: "/project_stakeholder", component: <ProjectStakeholder /> },
   { path: "/stakeholder_type", component: <StakeholderType /> },
   { path: "/document_type", component: <DocumentType /> },
-  {
-    path: "/Project",
-    component: (
-      <ProjectProvider>
-        <Project />
-      </ProjectProvider>
-    ),
-  },
-  {
-    path: "/project_list",
-    component: (
-      <ProjectListProvider>
-        <ProjectList />
-      </ProjectListProvider>
-    ),
-  },
-  {
-    path: "/Project/:id",
-    component: (
-      <ProjectProvider>
-        <ProjectOverview />
-      </ProjectProvider>
-    ),
-  },
-  {
-    path: "/projectdetail/:id",
-    component: (
-      // <ProjectProvider>
-        <ProjectDetail />
-      /*</ProjectProvider>*/
-    ),
-  },
-  
-  {
-    path: "/Project/:id/project_plan",
-    component: (
-      <ProjectProvider>
-        <ProjectPlan />
-      </ProjectProvider>
-    ),
-  },
-  {
-    path: "/Project/:id/budget_request",
-    component: (
-      <ProjectProvider>
-        <BudgetRequest />
-      </ProjectProvider>
-    ),
-  },
-  {
-    path: "/Project/:id/budget_expenditure",
-    component: (
-      <ProjectProvider>
-        <ProjectBudgetExpenditure />
-      </ProjectProvider>
-    ),
-  },
+  { path: "/Project", component: <Project /> },
+  { path: "/project_list", component: <ProjectList /> },
+  { path: "/Project/:id", component: <ProjectOverview /> },
+  { path: "/projectdetail/:id", component: <ProjectDetail /> },
+  { path: "/Project/:id/project_plan", component: <ProjectPlan />, },
+  { path: "/Project/:id/budget_request", component: <BudgetRequest /> },
+  { path: "/Project/:id/budget_expenditure", component: <ProjectBudgetExpenditure /> },
   { path: "/project_plan_list", component: <ProjectPlanList /> },
   { path: "/project_category", component: <ProjectCategory /> },
   { path: "/project_contractor", component: <ProjectContractor /> },
