@@ -95,11 +95,10 @@ const AuthMiddleware = ({ children }) => {
 
   if (isProjectPath(currentPath)) {
     allowedPaths.push(
-      "/Project/:id",
+      "/projectdetail_cso/:id",
       "/Project/:id/project_plan",
       "/Project/:id/budget_request",
-      "/Project/:id/budget_expenditure",
-      "/projectdetail/:id",
+      "/Project/:id/budget_expenditure"      
     );
   }
 

@@ -599,7 +599,7 @@ const ProjectModel = () => {
           }
           const { prj_id } = params.data || {};
           return (
-            <Link to={`/projectdetail/${prj_id}`} target="_blank">
+            <Link to={`/projectdetail_cso/${prj_id}`} target="_blank">
               <Button type="button" className="btn-sm mb-1 default" outline>
                 <i className="fa fa-eye"></i>
               </Button>

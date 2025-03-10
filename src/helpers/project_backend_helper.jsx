@@ -32,7 +32,7 @@ export const getSearchProject = async (params = {}) => {
 
 export const fetchProject = async (prj_id) => {
   try {
-    const response = await get(`/project/${prj_id}`);
+    const response = await get(`/project_cso/${prj_id}`);
     return response;
   } catch (error) {
     throw error;

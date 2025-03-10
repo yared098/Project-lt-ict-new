@@ -1199,5 +1199,10 @@
 	"cso_delete_time": "Delete Time",
 	"cso_created_by": "Created By",
 	"cso_status": "Status",
-	"usr_owner_id": "Owner"
+	"usr_owner_id": "Owner",
+	"project_cso":"CSO Project",
+	"project_cso_list":"CSO Project List",
+	"cso_proposal_request":"Project Proposal Request List",
+	"projectdetail_cso":"Project Detail",
+	"cso_proposal_request_approval":"Proposal Request List"
 }

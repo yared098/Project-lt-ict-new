@@ -5,8 +5,8 @@ const GET_BUDGET_REQUEST = "budget_request/listgrid";
 const ADD_BUDGET_REQUEST = "budget_request/insertgrid";
 const UPDATE_BUDGET_REQUEST = "budget_request/updategrid";
 const DELETE_BUDGET_REQUEST = "budget_request/deletegrid";
-const GET_BUDGET_REQUEST_APPROVAL = "budget_request_approval/listgrid";
-const UPDATE_BUDGET_REQUEST_APPROVAL = "budget_request_approval/updategrid";
+const GET_BUDGET_REQUEST_APPROVAL = "cso_proposal_request_approval/listgrid";
+const UPDATE_BUDGET_REQUEST_APPROVAL = "cso_proposal_request_approval/updategrid";
 
 export const getBudgetRequest = async (params) => {
   const queryString = new URLSearchParams(params).toString();

@@ -3,10 +3,6 @@ import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 import Spinners from "../../components/Common/Spinner";
 import Breadcrumbs from "../../components/Common/Breadcrumb";
-import RightOffCanvas from "../../components/Common/RightOffCanvas";
-import BudgetRequestAmount from "../Budgetrequestamount/index";
-import BudgetRequestTask from "../Budgetrequesttask/index";
-import BudgetExSource from "../Budgetexsource/index";
 import { useTranslation } from "react-i18next";
 import {
   Button,
@@ -19,7 +15,6 @@ import {
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-alpine.css";
-import BudgetRequestAnalysis from "./BudgetRequestAnalysis";
 import {
   useFetchBudgetRequests,
   useSearchBudgetRequests,
@@ -186,38 +181,6 @@ const BudgetRequestListModel = () => {
         },
       },
       {
-        headerName: t("bdr_requested_amount"),
-        field: "bdr_requested_amount",
-        sortable: true,
-        filter: true,
-        flex: 1.2,
-        valueFormatter: (params) => {
-          if (params.value != null) {
-            return new Intl.NumberFormat("en-US", {
-              minimumFractionDigits: 2,
-              maximumFractionDigits: 2,
-            }).format(params.value);
-          }
-          return "0.00"; // Default value if null or undefined
-        },
-      },
-      {
-        headerName: t("bdr_released_amount"),
-        field: "bdr_released_amount",
-        sortable: true,
-        filter: true,
-        flex: 1.2,
-        valueFormatter: (params) => {
-          if (params.value != null) {
-            return new Intl.NumberFormat("en-US", {
-              minimumFractionDigits: 2,
-              maximumFractionDigits: 2,
-            }).format(params.value);
-          }
-          return "0.00"; // Default value if null or undefined
-        },
-      },
-      {
         headerName: t("bdr_requested_date_gc"),
         field: "bdr_requested_date_gc",
         sortable: true,
@@ -317,33 +280,6 @@ const BudgetRequestListModel = () => {
         },
       },
     ];
-    if (
-      1 == 1
-    ) {
-      baseColumnDefs.push({
-        headerName: t("view_detail"),
-        field: "view_detail",
-        flex: .5,
-        cellRenderer: (params) => (
-          <div className="d-flex gap-3">
-            {params.data.is_editable ? (
-              <Link
-                to="#"
-                className="text-secondary"
-                onClick={() => handleClick(params.data)}
-              >
-                <i className="mdi mdi-cog font-size-18 ms-2" id="viewtooltip" />
-                <UncontrolledTooltip placement="top" target="viewtooltip">
-                  View
-                </UncontrolledTooltip>
-              </Link>
-            ) : (
-              ""
-            )}
-          </div>
-        ),
-      });
-    }
     return baseColumnDefs;
   }, []);
   console.log("error", error)
@@ -487,20 +423,6 @@ const BudgetRequestListModel = () => {
           </div>
         </div>
       </div>
-      {showCanvas && (
-        <RightOffCanvas
-          handleClick={handleClick}
-          showCanvas={showCanvas}
-          canvasWidth={84}
-          name={t("budget_request")}
-          id={budgetRequestMetaData.bdr_id}
-          components={{
-            [t("budget_request_amount")]: BudgetRequestAmount,
-            [t("budget_request_task")]: BudgetRequestTask,
-            [t("budget_ex_source")]: BudgetExSource,
-          }}
-        />
-      )}
     </React.Fragment>
   );
 };

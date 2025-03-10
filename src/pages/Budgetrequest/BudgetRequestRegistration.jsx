@@ -18,9 +18,6 @@ import { useFetchProject } from "../../queries/project_query";
 import { useFetchBudgetYears, usePopulateBudgetYears } from "../../queries/budgetyear_query";
 import BudgetRequestModal from "./BudgetRequestModal";
 import { useTranslation } from "react-i18next";
-import BudgetRequestAmount from "../Budgetrequestamount/index";
-import BudgetRequestTask from "../Budgetrequesttask/index";
-import BudgetExSource from "../Budgetexsource/index";
 import {
   Button,
   Col,
@@ -605,20 +602,6 @@ const BudgetRequestModel = ({ projectId, isActive }) => {
           </Form>
         </ModalBody>
       </Modal>
-      {showCanvas && (
-        <RightOffCanvas
-          handleClick={handleClick}
-          showCanvas={showCanvas}
-          canvasWidth={84}
-          name={t("budget_request")}
-          id={budgetRequestMetaData.bdr_id}
-          components={{
-            [t("budget_request_amount")]: BudgetRequestAmount,
-            [t("budget_request_task")]: BudgetRequestTask,
-            [t("budget_ex_source")]: BudgetExSource,
-          }}
-        />
-      )}
     </React.Fragment>
   );
 };

@@ -114,21 +114,8 @@ const ProjectTabs = ({ projects, handleAddClick, handleEditClick }) => {
         },
       },
       {
-        header: t("zone_owner"),
-        accessorKey: "add_name_or",
-        enableSorting: true,
-        enableColumnFilter: false,
-        cell: (cellProps) => {
-          return (
-            <span>
-              {cellProps.row.original.footer ? t("Total") : cellProps.getValue()}
-            </span>
-          );
-        },
-      },
-      {
-        header: t("prs_status"),
-        accessorKey: "bdr_request_status",
+        header: t("prj_project_status_id"),
+        accessorKey: "prj_project_status_id",
         enableSorting: true,
         enableColumnFilter: false,
         cell: (cellProps) => {
@@ -171,7 +158,7 @@ const ProjectTabs = ({ projects, handleAddClick, handleEditClick }) => {
           }
           const { prj_id } = cellProps.row.original || {};
           return (
-            <Link to={`/Projectdetail/${prj_id}#budget_request`} target="_blank" >
+            <Link to={`/projectdetail_cso/${prj_id}#proposal_request`} target="_blank" >
               <Button type="button" className="btn-sm mb-1 default" outline>
                 <i className="fa fa-eye"></i>
               </Button>
