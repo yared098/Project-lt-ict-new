@@ -1,40 +1,35 @@
-FROM node:16.20-alpine
+# Use a multi-stage build to reduce the final image size
+FROM node:16.20-alpine AS builder
 
-# 1) Update and install Nginx
-RUN apk update && apk add --no-cache nginx
-
-# Explicitly create necessary directories (if needed)
-RUN mkdir -p /etc/nginx/conf.d /usr/share/nginx/html
-
-# 2) Create and set a working directory
+# Set the working directory
 WORKDIR /app
 
-# 3) Copy package files first for better caching
+# Copy package files first for better caching
 COPY package*.json ./
 
+# Install dependencies
 RUN npm install --legacy-peer-deps
 
-
-#  4) Copy the rest of your source code (including .env, src, etc.)
+# Copy the rest of your source code
 COPY . .
 
-# 5) Build the React/Vite app (outputs to /app/dist)
+# Build the React/Vite app (outputs to /app/dist)
 RUN npm run build
 
-# 6) Ensure Nginx HTML folder exists and remove default files
-RUN rm -rf /usr/share/nginx/html/*
+# Use a minimal base image for the final stage
+FROM nginx:alpine
 
-# 7) Copy your compiled output to the Nginx directory
-RUN cp -r dist/* /usr/share/nginx/html/
-
-# 8) Remove existing Nginx configuration files
+# Remove default Nginx configuration files
 RUN rm -rf /etc/nginx/conf.d/* /etc/nginx/nginx.conf
 
-# 9) Copy your custom Nginx configuration as the main configuration file
+# Copy your custom Nginx configuration
 COPY nginx.conf /etc/nginx/nginx.conf
 
-# 10) Expose the port
+# Copy the compiled output from the builder stage to the Nginx directory
+COPY --from=builder /app/dist /usr/share/nginx/html
+
+# Expose the port
 EXPOSE 80
 
-# 11) Start Nginx in the foreground
+# Start Nginx in the foreground
 CMD ["nginx", "-g", "daemon off;"]
