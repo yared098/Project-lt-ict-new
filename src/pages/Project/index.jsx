@@ -531,11 +531,11 @@ const ProjectModel = () => {
           <Breadcrumbs title={t("project")} breadcrumbItem={t("project")} />
           <div className="w-100 d-flex gap-2">
             <>
-              <TreeForLists
+             {/* <TreeForLists
                 onNodeSelect={handleNodeSelect}
                 setIsAddressLoading={setIsAddressLoading}
                 setInclude={setInclude}
-              />
+              />*/}
               <div className="w-100">
                 <SearchForProject
                   textSearchKeys={["prj_name", "prj_code"]}

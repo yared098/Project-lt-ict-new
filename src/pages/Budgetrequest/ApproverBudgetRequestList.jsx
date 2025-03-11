@@ -468,7 +468,6 @@ const ApproverBudgetRequestList = () => {
             <div className="w-100">
               <AdvancedSearch
                 searchHook={useSearchBudgetRequestforApproval}
-                // dateSearchKeys={["budget_request_date"]}
                 textSearchKeys={["prj_name", "prj_code"]}
                 dropdownSearchKeys={[
                   {

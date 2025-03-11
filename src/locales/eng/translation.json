@@ -361,7 +361,7 @@
 	"bdr_requested_date_ec": "Requested Date (EC)",
 	"bdr_requested_date_gc": "Requested Date (GC)",
 	"bdr_released_date_ec": "Released Date (EC)",
-	"bdr_released_date_gc": "Released Date (GC)",
+	"bdr_released_date_gc": "Date (GC)",
 	"bdr_description": "Description",
 	"bdr_create_time": "Create Time",
 	"bdr_update_time": "Update Time",

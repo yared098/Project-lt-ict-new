@@ -179,7 +179,7 @@ const ProjectTabs = ({ projects, handleAddClick, handleEditClick }) => {
         cell: (cellProps) => {
           return (
             <div className="d-flex gap-3">
-              {(projects?.previledge?.is_role_editable == 1 && cellProps.row.original?.is_editable == 1) && (
+              {(projects?.previledge?.is_role_editable == 1 && cellProps.row.original?.is_editable == 1 && cellProps.row.original.prj_project_status_id == 1) && (
                 <Link
                   to="#"
                   className="text-success"
@@ -252,7 +252,7 @@ const ProjectTabs = ({ projects, handleAddClick, handleEditClick }) => {
                     SearchPlaceholder={t("filter_placeholder")}
                     buttonClass="btn btn-success waves-effect waves-light mb-2 me-2 addOrder-modal"
                     buttonName={t("add") + " " + t("project")}
-                    tableClass="align-middle table-nowrap dt-responsive nowrap w-100 table-check dataTable no-footer dtr-inline"
+                    tableClass="table-sm align-middle table-nowrap dt-responsive nowrap w-100 table-check dataTable no-footer dtr-inline"
                     // theadClass="table-light"
                     pagination="pagination"
                     paginationWrapper="dataTables_paginate paging_simple_numbers pagination-rounded"

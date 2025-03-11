@@ -322,7 +322,6 @@ const BudgetRequestListModel = () => {
             <div className="w-100">
               <AdvancedSearch
                 searchHook={useSearchBudgetRequests}
-                dateSearchKeys={["budget_request_date"]}
                 textSearchKeys={["prj_name", "prj_code"]}
                 dropdownSearchKeys={[
                   {

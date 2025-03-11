@@ -42,7 +42,7 @@ import { useFetchBudgetExSources } from "../../queries/budgetexsource_query";
 import DatePicker from "../../components/Common/DatePicker";
 import RequestFollowupModel from "../Requestfollowup";
 import AssignCsoRequests from "./AssignCsoRequests";
-
+import { convertToNumericValue } from "../../utils/commonMethods";
 const modalStyle = {
   width: "100%",
 };
@@ -180,31 +180,6 @@ const ApproverBudgetRequestListModal = (props) => {
                         </div>
                       )}
                   </FormGroup>
-                  {(formik.values.bdr_request_status === 2 ||
-                    (transaction.bdr_request_status === 2 &&
-                      transaction.bdr_released_amount)) && (
-                      <FormGroup>
-                        <Label>Released Amount</Label>
-                        <Input
-                          type="number"
-                          name="bdr_released_amount"
-                          onChange={formik.handleChange}
-                          value={formik.values.bdr_released_amount}
-                          invalid={
-                            formik.touched.bdr_released_amount &&
-                              formik.errors.bdr_released_amount
-                              ? true
-                              : false
-                          }
-                        />
-                        {formik.errors.bdr_released_amount &&
-                          formik.touched.bdr_released_amount && (
-                            <div className="text-danger">
-                              {formik.errors.bdr_released_amount}
-                            </div>
-                          )}
-                      </FormGroup>
-                    )}
                   <FormGroup>
                     <DatePicker
                       isRequired={true}
@@ -213,7 +188,6 @@ const ApproverBudgetRequestListModal = (props) => {
                       minDate={transaction?.bdr_requested_date_gc}
                     />
                   </FormGroup>
-
                   <FormGroup>
                     <Label>Action Remark</Label>
                     <Input
@@ -236,7 +210,6 @@ const ApproverBudgetRequestListModal = (props) => {
                         </div>
                       )}
                   </FormGroup>
-
                   {isPending ? (
                     <Button
                       type="submit"
